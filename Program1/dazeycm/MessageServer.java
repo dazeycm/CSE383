@@ -47,6 +47,7 @@ public class MessageServer {
 	private void run() {
 		log = new Log("UDP Server.log");
 		listeners = new ArrayList<SocketAddress>();
+		log.log("Server has started on port " + port);
 		
 		while(true) {
 			try {
@@ -55,25 +56,24 @@ public class MessageServer {
 				DatagramPacket pkt = new DatagramPacket(b,b.length);
 				sock.receive(pkt);
 				ArrayList<String> msgs = getMessage(b);
-				log.log(pkt.getSocketAddress() + " Got Packet" );
-				System.out.println("Got a packet from " + pkt.getSocketAddress());
+				log.log("Got a packet from " + pkt.getSocketAddress());
 
 				
 				if (msgs.get(0).equals("HELLO")) {
 					listeners.add(pkt.getSocketAddress());
-					System.out.println("got hello");
+					log.log("Got hello from " + pkt.getSocketAddress());
 					sendMessage(pkt.getSocketAddress(), "HELLO-RESPONSE", "");
 				} else if (msgs.get(0).equals("MESSAGE")) {
-					System.out.println("got message");
+					log.log("Got message from " + pkt.getSocketAddress() + ": " + msgs.get(1));
 					messageAll("MESSAGE", msgs.get(1), pkt.getSocketAddress());
-				} else if (msgs.get(0).equals("QUIT")) {
-					System.out.println("got quit message");
+				} else if (msgs.get(0).equals("GOODBYE")) {
 					listeners.remove(pkt.getSocketAddress());
+					log.log("Got quit from " + pkt.getSocketAddress());
 					sendMessage(pkt.getSocketAddress(), "GOODBYE-RESPONSE", "");
 				}
 				
 			} catch (IOException err) {
-				log.log("Error: " + err);
+				log.log("Error during communication");
 			}
 		}
 		
@@ -89,7 +89,7 @@ public class MessageServer {
 			
 			return toRet;
 		} catch (IOException err) {
-			log.log("Error receiving message: " + err);
+			log.log("Error receiving message");
 			return null;
 		}
 	}
@@ -112,7 +112,7 @@ public class MessageServer {
 			DatagramPacket sendResponse = new DatagramPacket(data,data.length, sa);
 			sock.send(sendResponse);
 		} catch (IOException err) {
-			log.log("Error sending message: " + err);
+			log.log("Error sending message");
 		}
 		
 	}
