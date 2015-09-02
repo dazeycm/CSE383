@@ -114,7 +114,5 @@ public class MessageServer {
 		} catch (IOException err) {
 			log.log("Error sending message");
 		}
-		
 	}
-
 }
