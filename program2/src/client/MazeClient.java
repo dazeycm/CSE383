@@ -25,9 +25,9 @@ public class MazeClient {
 		try{
 			connect();
 			
-			while(true) {
+			//while(true) {
 				
-			}
+			//}
 		} 
 		catch(Exception err) {
 			System.err.println("Error in main run loop: " + err);
@@ -41,16 +41,20 @@ public class MazeClient {
 		System.out.print("Username: ");
 		String username = kb.next();
 		
-		System.out.println("Password: ");
+		System.out.print("Password: ");
 		String password = kb.next();
 		
 		id = connectToServer(username, password);
 		if (id.equals("-1")) {
 			kb.close();
-			throw new XmlRpcException("Username is already in use");
+			throw new XmlRpcException("Failed to add user to db, username may already exist");
 		}
 		
 		kb.close();
+	}
+	
+	public void look() {
+		
 	}
 	
 	public String connectToServer(String user, String pass) throws XmlRpcException {
