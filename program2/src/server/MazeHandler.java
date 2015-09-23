@@ -74,6 +74,7 @@ public class MazeHandler {
 				  }
 				  row++;
 				}
+			in.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("File with maze could not be found");
 		} catch (IOException e) {

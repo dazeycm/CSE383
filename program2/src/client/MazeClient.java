@@ -46,8 +46,11 @@ public class MazeClient {
 		
 		id = connectToServer(username, password);
 		if (id.equals("-1")) {
+			kb.close();
 			throw new XmlRpcException("Username is already in use");
 		}
+		
+		kb.close();
 	}
 	
 	public String connectToServer(String user, String pass) throws XmlRpcException {
