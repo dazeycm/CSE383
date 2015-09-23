@@ -6,7 +6,7 @@ public class DB {
 	private Connection connection;
 	
 	private String user = "mazeuser";
-	private String pwd = "";
+	private String pwd = "maze";
 	private Statement stmnt;
 	private String dbURL = "jdbc:mysql://localhost/mazedata";
 	private Connection conn = null;
