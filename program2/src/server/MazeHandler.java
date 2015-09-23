@@ -30,15 +30,27 @@ public class MazeHandler {
 	public String close(String sid, String pass) {
 		//need to set in db to done
 		
-		if(!this.sid.containsKey(sid)) {
+		if(!MazeHandler.sid.containsKey(sid)) {
 			return "SID not found";
 		}
 		
-		if(!this.sid.get(sid).getPassword().equals(pass)) {
+		if(!MazeHandler.sid.get(sid).getPassword().equals(pass)) {
 			return "Password not found";
 		}
 		
 		return "OK";
+	}
+	
+	public String look(String sid) {
+		return sid;
+	}
+	
+	public String move(String username, String direction) {
+		return username;
+	}
+	
+	public String get() {
+		return null;
 	}
 	
 	public void createMazeArray() {
