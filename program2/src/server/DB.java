@@ -29,13 +29,26 @@ public class DB {
 												+ System.currentTimeMillis() / 1000L + ", "
 												+ 0 + ", "
 												+ "'ACTIVE')";			
-			stmnt.executeUpdate(sql);
+		stmnt.executeUpdate(sql);
 	}
 	
-	public void getXY(String user) throws SQLException {
-		String sql = "SELECT x, y FROM maze WHERE name = " + "\"" + user + "\"";
+	public int[] getXY(String user) throws SQLException {
+		String sql = "SELECT x, y, state FROM maze WHERE name = " + "\"" + user + "\"";
 		ResultSet rs = stmnt.executeQuery(sql);
-		System.out.println(rs.toString());
+		rs.next();
+		if(!rs.getString("state").equals("ACTIVE")) {
+			throw new SQLException("User state was not active");
+		}
+		return new int[] {rs.getInt("X"), rs.getInt("Y")};
+	}
+	
+	public void move(String user, int[] direction) throws SQLException {
+		String sql = "UPDATE maze SET X = " + direction[0] + ", Y = " + direction[1] + " WHERE name = " + "\"" + user + "\"";
+		stmnt.executeUpdate(sql);
+	}
+	
+	public void changeToFinished(String user) throws SQLException {
+		String sql = "UPDATE maze SET state = 'FINISHED' WHERE name = " + "\"" + user + "\"";
 	}
 	
 }

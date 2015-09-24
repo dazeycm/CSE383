@@ -12,6 +12,8 @@ public class MazeClient {
 	XmlRpcClient xmlRPCclient = null;
 	int port = -1;
 	String id = "";
+	String username;
+	String password;
 	
 	public MazeClient(String host,int p) throws IOException {
 		port = p;
@@ -23,11 +25,42 @@ public class MazeClient {
 	
 	public void run() {
 		try{
+			Scanner kb = new Scanner(System.in);
 			connect();
+			String next;
 			
-			//while(true) {
+			while(true) {
+				printCommands();
+				next = kb.nextLine();
+				switch(next) {
+				case "N":
+				case "S":
+				case "W":
+				case "E":
+					String moves = move(next);
+					if(moves.equals("-1")) {
+						System.out.println("error from move");
+						throw new XmlRpcException("Sid was not valid or state was not 'active'");
+					}
+					if(moves.equals("-2"))
+						System.err.println("Invalid move");
+					String looks = look();
+					if(looks.equals("-1")) {
+						System.out.println("error from look");
+						throw new XmlRpcException("Sid was not valid or state was not 'active'");
+					}
+					System.out.println(looks);
+					break;
+				case "G":
+					get();
+					break;
+				case "Q":
+				case "C":
+					close(password);
+					break;
+				}
 				
-			//}
+			}
 		} 
 		catch(Exception err) {
 			System.err.println("Error in main run loop: " + err);
@@ -39,27 +72,52 @@ public class MazeClient {
 		Scanner kb = new Scanner(System.in);
 		
 		System.out.print("Username: ");
-		String username = kb.next();
+		username = kb.next();
 		
 		System.out.print("Password: ");
-		String password = kb.next();
+		password = kb.next();
 		
 		id = connectToServer(username, password);
 		if (id.equals("-1")) {
 			kb.close();
 			throw new XmlRpcException("Failed to add user to db, username may already exist");
 		}
-		
-		kb.close();
 	}
 	
-	public void look() {
-		
+	public void printCommands() {
+		System.out.print("N|S|E|W to move\n");
+		System.out.print("G to get\n");
+		System.out.print("Q to quit\n");
+		System.out.print("C to quit\n");
+	}
+	
+	public String move(String direction) throws XmlRpcException {
+		Object[] params = new Object[]{id, direction};
+		String result= (String) xmlRPCclient.execute("mazehandler.move", params);
+		return result;
+	}
+	
+	public String get() throws XmlRpcException {
+		Object[] params = new Object[]{};
+		String result= (String) xmlRPCclient.execute("mazehandler.get", params);
+		return result;
+	}
+	
+	public String look() throws XmlRpcException {
+		Object[] params = new Object[]{id};
+		String result= (String) xmlRPCclient.execute("mazehandler.look", params);
+		return result;
 	}
 	
 	public String connectToServer(String user, String pass) throws XmlRpcException {
 		Object[] params = new Object[]{user, pass};
 		String result= (String) xmlRPCclient.execute("mazehandler.connect", params);
+		return result;
+	}
+	
+	public String close(String pass) throws XmlRpcException {
+		Object[] params = new Object[]{id, pass};
+		String result= (String) xmlRPCclient.execute("mazehandler.close", params);
 		return result;
 	}
 

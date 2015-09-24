@@ -1,6 +1,8 @@
 //OKAY TO USE X FOR WALL WHEN TELLING USER?
 //QUIT WITHOUT CLOSE? QUIT WITH CLOSE?
-//HAS TO BE RANDOM 
+//HAS TO BE RANDOM SID?
+//PRINT XML DOCUMENT?
+//HANDLING ERRORS FROM SERVER TO CLIENT?
 
 package server;
 
@@ -60,18 +62,84 @@ public class MazeHandler {
 	}
 	
 	public String look(String sid) {
-		String user = this.sid.get(sid).getUsername();
+		String user = MazeHandler.sid.get(Integer.parseInt(sid)).getUsername();
+		int x, y;
 		
 		try {
-			db.getXY(user);
+			int[] cords = db.getXY(user);
+			x = cords[0];
+			y = cords[1];
 		} catch (SQLException e) {
 			return "-1";
 		}
-		return sid;
+		
+		StringBuilder sb = new StringBuilder();
+		char[] surroundings = getSurrounding(x, y);
+		
+		sb.append("<");
+		for (char c : surroundings) {
+			sb.append(c);
+			sb.append(" ");
+		}
+		sb.append(">");
+		
+		return sb.toString();
 	}
 	
-	public String move(String username, String direction) {
-		return username;
+	public String move(String sid, String direction) {
+		String user = MazeHandler.sid.get(Integer.parseInt(sid)).getUsername();
+		int[] directions = new int[2];
+		int[] coords = new int[2];
+		
+		int[] cords = null;
+		try {
+			cords = db.getXY(user);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			return "-1";
+		}
+		
+		int x = cords[0];
+		int y = cords[1];
+		switch(direction) {
+		case "N":
+			directions[0] = 0;
+			directions[1] = -1;
+			break;
+		case "E":
+			directions[0] = +1;
+			directions[1] = 0;
+			break;
+		case "S":
+			directions[0] = 0;
+			directions[1] = +1;
+			break;
+		case "W": 
+			directions[0] = -1;
+			directions[1] = 0;
+			break;
+		}
+		
+		coords[0] = x + directions[0];
+		coords[1] = y + directions[1];
+		
+		
+		try{
+		if(maze[coords[1]][coords[0]] != ' ')
+			return "-2";
+		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
+			return "-2";
+		}
+		
+		try {
+			db.move(user, coords);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "-1";
+		}
+		
+		return user;
 	}
 	
 	public String get() {
