@@ -29,6 +29,13 @@ public class MazeClient {
 			connect();
 			String next;
 			
+			String looks = look();
+			if(looks.equals("-1")) {
+				System.err.println("Error from look function");
+				throw new XmlRpcException("Sid was not valid or state was not 'active'");
+			}
+			System.out.println(looks);
+			
 			while(true) {
 				printCommands();
 				next = kb.nextLine();
@@ -39,23 +46,37 @@ public class MazeClient {
 				case "E":
 					String moves = move(next);
 					if(moves.equals("DONE")) {
-						
+						String ret = close(password);
+						if(ret.equals("OK")) {
+							System.out.println("Congratulations, you finished!");
+							System.exit(0);
+						} else {
+							System.err.println(ret);
+						}
 					}
-					if(moves.equals("DIED")) {
-						
+					else if(moves.equals("DIED")) {
+						String ret = close(password);
+						if(ret.equals("OK")) {
+							System.out.println("Congratulations, you died!");
+							System.exit(0);
+						} else {
+							System.err.println(ret);
+						}
 					}
-					if(moves.equals("-1")) {
-						System.out.println("error from move");
+					else if(moves.equals("-1")) {
+						System.err.println("Error from move function");
 						throw new XmlRpcException("Sid was not valid or state was not 'active'");
 					}
-					if(moves.equals("-2"))
+					else if(moves.equals("-2"))
 						System.err.println("Invalid move");
-					String looks = look();
-					if(looks.equals("-1")) {
-						System.out.println("error from look");
-						throw new XmlRpcException("Sid was not valid or state was not 'active'");
+					else if(moves.equals("OK")){
+						looks = look();
+						if(looks.equals("-1")) {
+							System.err.println("Error from look function");
+							throw new XmlRpcException("Sid was not valid or state was not 'active'");
+						}
+						System.out.println(looks);
 					}
-					System.out.println(looks);
 					break;
 				case "G":
 					get();
@@ -65,7 +86,6 @@ public class MazeClient {
 					close(password);
 					break;
 				}
-				
 			}
 		} 
 		catch(Exception err) {
@@ -94,7 +114,7 @@ public class MazeClient {
 		System.out.print("N|E|S|W to move\n");
 		System.out.print("G to get\n");
 		System.out.print("Q to quit\n");
-		System.out.print("C to quit\n");
+		System.out.print("C to quit\n\n\n");
 	}
 	
 	public String move(String direction) throws XmlRpcException {

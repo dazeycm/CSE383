@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class MazeHandler {
@@ -48,13 +49,12 @@ public class MazeHandler {
 	}
 	
 	public String close(String sid, String pass) {
-		//need to set in db to done
 		
-		if(!MazeHandler.sid.containsKey(sid)) {
+		if(!MazeHandler.sid.containsKey(Integer.parseInt(sid))) {
 			return "SID not found";
 		}
 		
-		if(!MazeHandler.sid.get(sid).getPassword().equals(pass)) {
+		if(!MazeHandler.sid.get(Integer.parseInt(sid)).getPassword().equals(pass)) {
 			return "Password not found";
 		}
 		
@@ -125,8 +125,6 @@ public class MazeHandler {
 			
 			if(maze[coords[1]][coords[0]] == 'E') {
 				db.changeToFinished(user);
-				System.out.println(sid);
-				System.out.println("Found E");
 				return "DONE";
 			}
 			if(maze[coords[1]][coords[0]] == 'P') {
@@ -137,7 +135,6 @@ public class MazeHandler {
 				return "-2";		
 		
 		} catch (ArrayIndexOutOfBoundsException | SQLException e) {
-			e.printStackTrace();
 			return "-2";
 		}
 		
@@ -147,7 +144,7 @@ public class MazeHandler {
 			return "-1";
 		}
 		
-		return user;
+		return "OK";
 	}
 	
 	public String get() {

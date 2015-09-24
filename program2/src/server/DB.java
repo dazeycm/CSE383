@@ -51,7 +51,6 @@ public class DB {
 	
 	public void changeToFinished(String user) throws SQLException {
 		String sql = "UPDATE maze SET state = 'FINISHED' WHERE name = " + "\"" + user + "\"";
-		System.out.println(sql);
 		stmnt.executeUpdate(sql);
 	}
 	
