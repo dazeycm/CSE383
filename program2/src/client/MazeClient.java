@@ -38,6 +38,12 @@ public class MazeClient {
 				case "W":
 				case "E":
 					String moves = move(next);
+					if(moves.equals("DONE")) {
+						
+					}
+					if(moves.equals("DIED")) {
+						
+					}
 					if(moves.equals("-1")) {
 						System.out.println("error from move");
 						throw new XmlRpcException("Sid was not valid or state was not 'active'");
@@ -85,7 +91,7 @@ public class MazeClient {
 	}
 	
 	public void printCommands() {
-		System.out.print("N|S|E|W to move\n");
+		System.out.print("N|E|S|W to move\n");
 		System.out.print("G to get\n");
 		System.out.print("Q to quit\n");
 		System.out.print("C to quit\n");

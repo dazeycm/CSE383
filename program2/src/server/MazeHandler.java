@@ -76,12 +76,10 @@ public class MazeHandler {
 		StringBuilder sb = new StringBuilder();
 		char[] surroundings = getSurrounding(x, y);
 		
-		sb.append("<");
 		for (char c : surroundings) {
 			sb.append(c);
 			sb.append(" ");
 		}
-		sb.append(">");
 		
 		return sb.toString();
 	}
@@ -95,7 +93,6 @@ public class MazeHandler {
 		try {
 			cords = db.getXY(user);
 		} catch (SQLException e1) {
-			e1.printStackTrace();
 			return "-1";
 		}
 		
@@ -125,9 +122,21 @@ public class MazeHandler {
 		
 		
 		try{
-		if(maze[coords[1]][coords[0]] != ' ')
-			return "-2";
-		} catch (ArrayIndexOutOfBoundsException e) {
+			
+			if(maze[coords[1]][coords[0]] == 'E') {
+				db.changeToFinished(user);
+				System.out.println(sid);
+				System.out.println("Found E");
+				return "DONE";
+			}
+			if(maze[coords[1]][coords[0]] == 'P') {
+				db.changeToFinished(user);
+				return "DIED";
+			}
+			if(maze[coords[1]][coords[0]] != ' ')
+				return "-2";		
+		
+		} catch (ArrayIndexOutOfBoundsException | SQLException e) {
 			e.printStackTrace();
 			return "-2";
 		}
@@ -135,7 +144,6 @@ public class MazeHandler {
 		try {
 			db.move(user, coords);
 		} catch (SQLException e) {
-			e.printStackTrace();
 			return "-1";
 		}
 		

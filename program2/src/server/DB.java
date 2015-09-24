@@ -45,10 +45,14 @@ public class DB {
 	public void move(String user, int[] direction) throws SQLException {
 		String sql = "UPDATE maze SET X = " + direction[0] + ", Y = " + direction[1] + " WHERE name = " + "\"" + user + "\"";
 		stmnt.executeUpdate(sql);
+		sql = "UPDATE maze SET moves = moves + 1 WHERE name = " + "\"" + user + "\"";
+		stmnt.executeUpdate(sql);
 	}
 	
 	public void changeToFinished(String user) throws SQLException {
 		String sql = "UPDATE maze SET state = 'FINISHED' WHERE name = " + "\"" + user + "\"";
+		System.out.println(sql);
+		stmnt.executeUpdate(sql);
 	}
 	
 }
