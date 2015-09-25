@@ -1,15 +1,10 @@
-//OKAY TO USE X FOR WALL WHEN TELLING USER?
-//QUIT WITHOUT CLOSE? QUIT WITH CLOSE?
-//HAS TO BE RANDOM SID?
-//PRINT XML DOCUMENT?
-//HANDLING ERRORS FROM SERVER TO CLIENT?
-
 package server;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,7 +28,10 @@ public class MazeHandler {
 		
 		for(Map.Entry<Integer, User> entry : sid.entrySet()) {
 			if (entry.getValue().getUsername().equals(user)) {
-				return "-1"; // return -1 to represent that username already exists
+				if(entry.getValue().getPassword().equals(pass))
+					return entry.getKey().toString();
+				else 
+					return "-1"; //return -1 for non matching username/pass 
 			}
 		}
 		
@@ -41,7 +39,7 @@ public class MazeHandler {
 		try {
 			db.addUser(user, startX, startY);
 		} catch (SQLException e) {
-			return "-1";
+			return "-2"; //return -2 for db user
 		}
 		sid.put(currId, new User(user, pass));
 		
@@ -58,6 +56,11 @@ public class MazeHandler {
 			return "Password not found";
 		}
 		
+		try {
+			db.deleteUser(MazeHandler.sid.get(Integer.parseInt(sid)).getUsername());
+		} catch (NumberFormatException | SQLException e) {
+			return "-1";
+		}
 		return "OK";
 	}
 	
@@ -148,7 +151,49 @@ public class MazeHandler {
 	}
 	
 	public String get() {
-		return null;
+		try {
+			ResultSet rs = db.getAllInfo();
+			StringBuilder sb = new StringBuilder();
+			
+			sb.append("<?xml version=1.0>\n");
+			sb.append("<maze>\n");
+			while(rs.next()) {
+				sb.append("<user>\n");
+				
+				sb.append("<name>");
+				sb.append(rs.getString("name"));
+				sb.append("</name>\n");
+				
+				sb.append("<x>");
+				sb.append(rs.getInt("x"));
+				sb.append("</x>\n");
+				
+				sb.append("<y>");
+				sb.append(rs.getInt("y"));
+				sb.append("</y>\n");
+				
+				sb.append("<lastSeen>");
+				sb.append(rs.getString("lastSeen"));
+				sb.append("</lastSeen>\n");
+				
+				sb.append("<moves>");
+				sb.append(rs.getInt("moves"));
+				sb.append("</moves>\n");
+				
+				sb.append("<state>");
+				sb.append(rs.getString("state"));
+				sb.append("</state>\n");
+				
+				sb.append("</user>\n");
+			}
+			sb.append("</maze>\n");
+			
+			return sb.toString();
+			
+		} catch (SQLException e) {
+			return "-1";
+		}
+		
 	}
 	
 	private void createMazeArray() {

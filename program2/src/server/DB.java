@@ -54,4 +54,15 @@ public class DB {
 		stmnt.executeUpdate(sql);
 	}
 	
+	public void deleteUser(String user) throws SQLException {
+		String sql = "DELETE FROM maze WHERE name = " + "\"" + user + "\"";
+		stmnt.executeUpdate(sql);
+	}
+	
+	public ResultSet getAllInfo() throws SQLException {
+		String sql = "SELECT * FROM maze";
+		ResultSet rs = stmnt.executeQuery(sql);
+		return rs;
+	}
+	
 }

@@ -79,11 +79,20 @@ public class MazeClient {
 					}
 					break;
 				case "G":
-					get();
+					String g = get();
+					System.out.println(g);
 					break;
 				case "Q":
+					System.out.println("Exiting! Goodbye!");
+					System.exit(0);
 				case "C":
-					close(password);
+					String ret = close(password);
+					if(ret.equals("OK")) {
+						System.out.println("Your account will be deleted! Exiting! Goodbye!");
+					}
+					else {
+						System.err.println("Failed to close!");
+					}
 					break;
 				}
 			}
@@ -106,15 +115,19 @@ public class MazeClient {
 		id = connectToServer(username, password);
 		if (id.equals("-1")) {
 			kb.close();
-			throw new XmlRpcException("Failed to add user to db, username may already exist");
+			throw new XmlRpcException("Invalid username/pass combination");
+		}
+		else if (id.equals("-2")) {
+			kb.close();
+			throw new XmlRpcException("Username already exists in db");
 		}
 	}
 	
 	public void printCommands() {
 		System.out.print("N|E|S|W to move\n");
 		System.out.print("G to get\n");
-		System.out.print("Q to quit\n");
-		System.out.print("C to quit\n\n\n");
+		System.out.print("Q to temporarily close\n");
+		System.out.print("C to quit\n\n");
 	}
 	
 	public String move(String direction) throws XmlRpcException {
